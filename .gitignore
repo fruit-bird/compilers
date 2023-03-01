@@ -1,1 +1,4 @@
-/**/main
+# to remove executables (files without an extension)
+*
+!/*
+!/**/*.*
