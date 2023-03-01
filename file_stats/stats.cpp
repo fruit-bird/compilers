@@ -47,7 +47,7 @@ bool is_word(std::string_view input)
 }
 
 // floating point numbers to do
-bool is_number(std::string_view input)
+bool is_int(std::string_view input)
 {
     for (auto&& c : input) {
         if (NUMBERS.find(c) == std::string::npos) {
@@ -55,6 +55,10 @@ bool is_number(std::string_view input)
         }
     }
     return true;
+}
+
+bool is_float(std::string_view input) {
+    return false;
 }
 
 bool is_symbol(std::string_view input)
@@ -69,12 +73,14 @@ bool is_symbol(std::string_view input)
 
 struct Stats {
     int word_count = 0;
-    int number_count = 0;
+    int int_count = 0;
+    int float_count = 0;
     int symbol_count = 0;
 
     static Stats from_string(std::string_view input)
     {
         // fix for an issue with return carriage
+        // collect everything to a string
         std::string input_in_one_line {};
         auto const lines = split(input, '\n');
         for (auto&& line : lines) {
@@ -83,11 +89,14 @@ struct Stats {
 
         auto const word_tokens = split(input_in_one_line, ' ');
         auto stats = Stats {};
+        // iterate over "words"
         for (auto&& str_token : word_tokens) {
             if (is_word(str_token)) {
                 stats.word_count += 1;
-            } else if (is_number(str_token)) {
-                stats.number_count += 1;
+            } else if (is_int(str_token)) {
+                stats.int_count += 1;
+            } else if (is_float(str_token)) {
+                stats.float_count += 1;
             } else if (is_symbol(str_token)) {
                 stats.symbol_count += 1;
             }
@@ -96,14 +105,16 @@ struct Stats {
     }
 };
 
+// TODO: is_int has to validate floating points too
 int main(int argc, char const* argv[])
 {
     auto const file_name = argv[1];
-    auto const file_contents = read_to_string(argv[1]);
+    auto const file_contents = read_to_string(file_name);
 
     auto const stats = Stats::from_string(file_contents);
     std::cout << "\nWord Count:\t" << stats.word_count
-              << "\nNumber Count:\t" << stats.number_count
+              << "\nInteger Count:\t" << stats.int_count
+              << "\nFloat Count:\t" << stats.float_count
               << "\nSymbol Count:\t" << stats.symbol_count << '\n';
 
     return 0;
