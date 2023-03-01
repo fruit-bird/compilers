@@ -1,4 +1,2 @@
-# to remove executables (files without an extension)
-*
-!/*
-!/**/*.*
+/.DS_Store
+/.vscode
